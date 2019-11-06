@@ -14,7 +14,8 @@ export default class UsersList extends Component {
     return <div className='usersList'>
       users List
       <TriggerPath path={{
-        ...this.props.drinkState.path}}/>
+        ...this.props.path
+      }}/>
     </div>
   };
 };

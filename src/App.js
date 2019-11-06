@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import UserCard from './components/userCard/userCard';
 import UsersList from "./components/usersList/usersList";
+import Loading from "./components/loading/loading";
 import './App.css';
 import {connect} from 'react-redux';
 import {Route} from 'react-router';
@@ -18,10 +19,11 @@ import {
   showLoading,
   hideLoading
 } from './actions/LoadingActions';
+
 class App extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state ={ isLoading: true};
+    this.state = {isLoading: true};
     this.question = {
       head: "https://api.github.com/search/users?q=location%3A",
       middle: "+followers%3A%3E%3D",
@@ -29,9 +31,18 @@ class App extends React.Component {
     };
     this.location = "kiev";
     this.followers = "200";
+    this.refreshUsersList = refreshUsersList;
+    this.throwErrorMessage = throwErrorMessage;
+    this.hideErrorMessage = hideErrorMessage;
+    this.refreshAndShowUserCard = refreshAndShowUserCard;
+    this.hideUserCard = hideUserCard;
+    this.showLoading = showLoading;
+    this.hideLoading = hideLoading;
   }
 
-  componentDidMount(){
+  componentDidMount() {
+    console.log('APP **************************** this.props', this.props);
+
     return fetch(`${this.question.head}${this.location}${this.question.middle}${this.followers}${this.question.tail}`)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -39,38 +50,69 @@ class App extends React.Component {
         this.setState({
           isLoading: false,
           dataSource: responseJson,
-        }, function(){
-
+        }, function () {
+          let localItems = [...this.state.dataSource.items];
+          this.refreshUsersList(localItems)
+          console.log('response **********function************ function', localItems[5]);
         });
-        console.log(this.state);
       })
-      .catch((error) =>{
+      .catch((error) => {
         console.error(error);
       });
   }
-  render(){
-    if(this.state.isLoading){
-      return(
-        <div className="App">
-          <header className="App-header">
-            <p>
-              {"loading"}
-            </p>
 
-          </header>
+  render() {
+    if (this.state.isLoading) {
+      return (
+        <div className="App">
+          <Loading/>
         </div>
       )
     }
+    this.refreshUsersList();
+    const usersList = this.props.usersList;
+    const userCard = this.props.userCard;
+    const loading = this.props.loading;
+    const isErrorVisible = this.props.isErrorVisible;
     return (
       <div className="App">
-        <header className="App-header">
-          <p>
-            {this.state.dataSource.items[3].login}
-          </p>
-
-        </header>
+        <HashRouter>
+          <Redirect from="/" exact to="/usersList"/>
+          <Route path="/usersList"
+                 render={() => this._usersListCall(
+                   usersList,
+                   isErrorVisible
+                 )}
+          />
+          <Route path="/userCard"
+                 render={() => this._userCardCall(
+                   userCard,
+                 )}
+          />
+        </HashRouter>
+        <h1 className="App-header">
+          {this.state.dataSource.items[3].login}
+        </h1>
       </div>
     );
+  }
+
+  _usersListCall(
+    usersList,
+    isErrorVisible
+  ) {
+    return <UsersList
+      usersList={usersList}
+      isErrorVisible={isErrorVisible}
+    />
+  }
+
+  _userCardCall(
+    userCard,
+  ) {
+    return <UsersList
+      userCard={userCard}
+    />
   }
 
 }

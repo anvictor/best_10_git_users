@@ -11,7 +11,7 @@ export default class UserCard extends Component {
   render() {
     return <div className='userCard'>
       user card
-      <TriggerPath path={{...this.props.refillState.path}}/>
+      <TriggerPath path={{...this.props.path}}/>
     </div>
   };
 };
