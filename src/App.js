@@ -53,7 +53,7 @@ class App extends React.Component {
         }, function () {
           let localItems = [...this.state.dataSource.items];
           this.refreshUsersList(localItems)
-          console.log('response **********function************ function', localItems[5]);
+          console.log('response **********function************ function', localItems);
         });
       })
       .catch((error) => {
@@ -62,18 +62,21 @@ class App extends React.Component {
   }
 
   render() {
+
+    this.refreshUsersList();
+    const usersList = this.props.store.usersList.usersList;
+    const userCard = this.props.store.userCard;
+    const loading = this.props.store.loading;
+    const isErrorVisible = this.props.isErrorVisible;
     if (this.state.isLoading) {
       return (
         <div className="App">
-          <Loading/>
+          <Loading
+          loading = {loading}
+          />
         </div>
       )
     }
-    this.refreshUsersList();
-    const usersList = this.props.usersList;
-    const userCard = this.props.userCard;
-    const loading = this.props.loading;
-    const isErrorVisible = this.props.isErrorVisible;
     return (
       <div className="App">
         <HashRouter>
@@ -90,6 +93,7 @@ class App extends React.Component {
                  )}
           />
         </HashRouter>
+
         <h1 className="App-header">
           {this.state.dataSource.items[3].login}
         </h1>
@@ -110,7 +114,7 @@ class App extends React.Component {
   _userCardCall(
     userCard,
   ) {
-    return <UsersList
+    return <UserCard
       userCard={userCard}
     />
   }
