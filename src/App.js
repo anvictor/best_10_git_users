@@ -1,6 +1,23 @@
-import React from 'react';
+import React, {Component} from 'react';
+import UserCard from './components/userCard/userCard';
+import UsersList from "./components/usersList/usersList";
 import './App.css';
-
+import {connect} from 'react-redux';
+import {Route} from 'react-router';
+import {HashRouter, Redirect} from 'react-router-dom';
+import {
+  refreshUsersList,
+  throwErrorMessage,
+  hideErrorMessage,
+} from './actions/UsersListActions';
+import {
+  refreshAndShowUserCard,
+  hideUserCard,
+} from './actions/UserCardActions';
+import {
+  showLoading,
+  hideLoading
+} from './actions/LoadingActions';
 class App extends React.Component {
   constructor(props){
     super(props);
@@ -58,4 +75,16 @@ class App extends React.Component {
 
 }
 
-export default App;
+const mapStateToProps = store => {
+  return {store}
+};
+const mapDispatchToProps = dispatch => ({
+  refreshUsersListDispatch: () => dispatch(refreshUsersList()),
+  throwErrorMessageDispatch: () => dispatch(throwErrorMessage()),
+  hideErrorMessageDispatch: () => dispatch(hideErrorMessage()),
+  refreshAndShowUserCardDispatch: () => dispatch(refreshAndShowUserCard()),
+  hideUserCardDispatch: () => dispatch(hideUserCard()),
+  showLoadingDispatch: () => dispatch(showLoading()),
+  hideLoadingDispatch: () => dispatch(hideLoading())
+});
+export default connect(mapStateToProps, mapDispatchToProps)(App);
