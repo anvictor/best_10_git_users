@@ -1,21 +1,32 @@
 import React, {Component} from "react";
-import TriggerPath from '../link';
 import './userCard.css';
+import Button from "@material-ui/core/Button/Button";
 
 export default class UserCard extends Component {
   constructor(props) {
     super(props);
-    this.handleAddConsumableClicked = this.handleAddConsumableClicked.bind(this);
   }
 
   render() {
-    return <div className='userCard'>
-      user card
-      <TriggerPath path={{...this.props.path}}/>
-    </div>
+    if (this.props.user){
+      console.log('userCard ****************************** this.props', this.props.user.login);
+      return <div className='userCard'>
+        <h1>
+          <a href={this.props.user.html_url}>{this.props.user.login}</a>
+        </h1>
+        <img src={this.props.user.avatar_url} alt={this.props.user.login}/>
+        <p>
+          <a href="/usersList">
+            <Button className='backBtn'
+                    variant="contained" color='primary'>
+              BACK
+            </Button>
+          </a>
+        </p>
+
+
+      </div>
+    }
+    return <div></div>
   };
 };
-
-
-
-

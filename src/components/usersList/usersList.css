@@ -1,3 +1,15 @@
-.usersList{
- color: red;
+.usersList {
+  color: red;
+}
+
+.usersList li {
+  list-style-type: none;
+
+}
+
+
+
+.usersList ul {
+  margin-left: 0;
+  padding-left: 0;
 }

@@ -1,10 +1,8 @@
 import {combineReducers} from 'redux';
-import usersListReducer from "./usersList";
-import userCardReducer from "./userCard";
-import loadingReducer from "./loading";
+import userCardReducers from "./userCard";
+import usersListReducers from "./usersList";
 
 export default combineReducers({
-  usersList : usersListReducer,
-  userCard: userCardReducer,
-  loading: loadingReducer
+  userCard : userCardReducers,
+  usersList : usersListReducers,
 })

@@ -1,0 +1,15 @@
+.userItem a{
+  text-decoration: none;
+  color: #000;
+}
+.container{
+  display: flex;
+  align-items: center;
+  border-bottom: solid 1px grey;
+}
+
+.imagePlace{
+  width: 50px;
+  margin: 10px;
+}
+

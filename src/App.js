@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import UserCard from './components/userCard/userCard';
 import UsersList from "./components/usersList/usersList";
+import UserCard from "./components/userCard/userCard";
 import Loading from "./components/loading/loading";
 import './App.css';
 import {connect} from 'react-redux';
@@ -12,13 +12,9 @@ import {
   hideErrorMessage,
 } from './actions/UsersListActions';
 import {
-  refreshAndShowUserCard,
-  hideUserCard,
+  refreshUserCard
 } from './actions/UserCardActions';
-import {
-  showLoading,
-  hideLoading
-} from './actions/LoadingActions';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -31,29 +27,29 @@ class App extends React.Component {
     };
     this.location = "kiev";
     this.followers = "200";
-    this.refreshUsersList = refreshUsersList;
-    this.throwErrorMessage = throwErrorMessage;
-    this.hideErrorMessage = hideErrorMessage;
-    this.refreshAndShowUserCard = refreshAndShowUserCard;
-    this.hideUserCard = hideUserCard;
-    this.showLoading = showLoading;
-    this.hideLoading = hideLoading;
+    this.refreshUserCard = this.props.refreshUserCardDispatch;
+    this.refreshUsersList = this.props.refreshUsersListDispatch;
+    this.throwErrorMessage = this.props.throwErrorMessageDispatch;
+    this.hideErrorMessage = this.props.hideErrorMessageDispatch;
+
+    this._userCard = this._userCard.bind(this);
   }
 
   componentDidMount() {
-    console.log('APP **************************** this.props', this.props);
-
-    return fetch(`${this.question.head}${this.location}${this.question.middle}${this.followers}${this.question.tail}`)
+    return fetch(`${this.
+      question.head}${this.
+      location}${this.
+      question.middle}${this.
+      followers}${this.
+      question.tail}`)
       .then((response) => response.json())
       .then((responseJson) => {
-
         this.setState({
           isLoading: false,
           dataSource: responseJson,
         }, function () {
           let localItems = [...this.state.dataSource.items];
           this.refreshUsersList(localItems)
-          console.log('response **********function************ function', localItems);
         });
       })
       .catch((error) => {
@@ -62,10 +58,10 @@ class App extends React.Component {
   }
 
   render() {
-
-    this.refreshUsersList();
+    console.log('APP **************************** this.state', this.state);
+    console.log('APP **************************** this.props', this.props);
     const usersList = this.props.store.usersList.usersList;
-    const userCard = this.props.store.userCard;
+    const user = this.props.store.usersList.user;
     const loading = this.props.store.loading;
     const isErrorVisible = this.props.isErrorVisible;
     if (this.state.isLoading) {
@@ -80,57 +76,58 @@ class App extends React.Component {
     return (
       <div className="App">
         <HashRouter>
-          <Redirect from="/" exact to="/usersList"/>
-          <Route path="/usersList"
-                 render={() => this._usersListCall(
-                   usersList,
-                   isErrorVisible
-                 )}
-          />
-          <Route path="/userCard"
-                 render={() => this._userCardCall(
-                   userCard,
-                 )}
-          />
-        </HashRouter>
+            <Redirect from="/" exact to="/usersList"/>
+            <Route path="/usersList"
+                   render={() => this._usersListCall(
+                     usersList,
+                     isErrorVisible,
+                     this._userCard
+                   )}
+            />
 
-        <h1 className="App-header">
-          {this.state.dataSource.items[3].login}
-        </h1>
+        </HashRouter>
+        <UserCard
+          user={this.state.user}
+        />
       </div>
     );
   }
 
   _usersListCall(
     usersList,
-    isErrorVisible
+    isErrorVisible,
+    userCard
   ) {
     return <UsersList
       usersList={usersList}
       isErrorVisible={isErrorVisible}
+      userCard = {userCard}
     />
   }
 
-  _userCardCall(
-    userCard,
-  ) {
+  _userCard(user) {
+    console.log('event click on user**********************user',user);
+
+    this.refreshUserCard(user);
+    this.setState({
+      user: user
+    });
     return <UserCard
-      userCard={userCard}
+      user={user}
     />
   }
-
 }
 
 const mapStateToProps = store => {
   return {store}
 };
 const mapDispatchToProps = dispatch => ({
-  refreshUsersListDispatch: () => dispatch(refreshUsersList()),
+  refreshUserCardDispatch: (user) => dispatch(refreshUserCard(user)),
+  refreshUsersListDispatch: (usersArray) => dispatch(refreshUsersList(usersArray)),
   throwErrorMessageDispatch: () => dispatch(throwErrorMessage()),
   hideErrorMessageDispatch: () => dispatch(hideErrorMessage()),
-  refreshAndShowUserCardDispatch: () => dispatch(refreshAndShowUserCard()),
-  hideUserCardDispatch: () => dispatch(hideUserCard()),
-  showLoadingDispatch: () => dispatch(showLoading()),
-  hideLoadingDispatch: () => dispatch(hideLoading())
 });
 export default connect(mapStateToProps, mapDispatchToProps)(App);
+
+
+// https://api.github.com/search/users?q=location%3Akiev+followers%3A%3E%3D200&type=Users
