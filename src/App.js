@@ -2,6 +2,7 @@ import React from 'react';
 import UsersList from "./components/usersList/usersList";
 import UserCard from "./components/userCard/userCard";
 import Loading from "./components/loading/loading";
+import Error from "./components/error/error";
 import './App.css';
 import {connect} from 'react-redux';
 import {Route} from 'react-router';
@@ -19,7 +20,10 @@ import {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: true};
+    this.state = {
+      isLoading: true,
+      isErrorVisible: false
+    };
     this.question = {
       head: "https://api.github.com/search/users?q=location%3A",
       middle: "+followers%3A%3E%3D",
@@ -31,7 +35,6 @@ class App extends React.Component {
     this.refreshUsersList = this.props.refreshUsersListDispatch;
     this.throwErrorMessage = this.props.throwErrorMessageDispatch;
     this.hideErrorMessage = this.props.hideErrorMessageDispatch;
-
     this._userCard = this._userCard.bind(this);
   }
 
@@ -49,15 +52,22 @@ class App extends React.Component {
           dataSource: responseJson,
         }, function () {
           let localItems = [...this.state.dataSource.items];
+          this.setState({
+            isErrorVisible: true
+          });
           this.refreshUsersList(localItems);
-          this.throwErrorMessage("error");
-          setTimeout(()=>this.hideErrorMessage(),2000);
+
         });
       })
       .catch((error) => {
         console.error(error);
         this.throwErrorMessage(error);
-        setTimeout(()=>this.hideErrorMessage(),2000);
+        setTimeout(()=>{
+          this.hideErrorMessage();
+          this.setState({
+            isErrorVisible: true
+          });
+        },2000);
       });
   }
 
@@ -75,7 +85,10 @@ class App extends React.Component {
     }
     return (
       <div className="App">
-        <div id={"error"}></div>
+        {!this.state.isErrorVisible && <Error
+          error = "error"
+        />}
+
         <HashRouter>
             <Redirect from="/" exact to="/usersList"/>
             <Route path="/usersList"
