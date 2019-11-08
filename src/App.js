@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import UsersList from "./components/usersList/usersList";
 import UserCard from "./components/userCard/userCard";
 import Loading from "./components/loading/loading";
@@ -49,21 +49,21 @@ class App extends React.Component {
           dataSource: responseJson,
         }, function () {
           let localItems = [...this.state.dataSource.items];
-          this.refreshUsersList(localItems)
+          this.refreshUsersList(localItems);
+          this.throwErrorMessage("error");
+          setTimeout(()=>this.hideErrorMessage(),2000);
         });
       })
       .catch((error) => {
         console.error(error);
+        this.throwErrorMessage(error);
+        setTimeout(()=>this.hideErrorMessage(),2000);
       });
   }
 
   render() {
-    console.log('APP **************************** this.state', this.state);
-    console.log('APP **************************** this.props', this.props);
     const usersList = this.props.store.usersList.usersList;
-    const user = this.props.store.usersList.user;
     const loading = this.props.store.loading;
-    const isErrorVisible = this.props.isErrorVisible;
     if (this.state.isLoading) {
       return (
         <div className="App">
@@ -75,12 +75,12 @@ class App extends React.Component {
     }
     return (
       <div className="App">
+        <div id={"error"}></div>
         <HashRouter>
             <Redirect from="/" exact to="/usersList"/>
             <Route path="/usersList"
                    render={() => this._usersListCall(
                      usersList,
-                     isErrorVisible,
                      this._userCard
                    )}
             />
@@ -95,12 +95,10 @@ class App extends React.Component {
 
   _usersListCall(
     usersList,
-    isErrorVisible,
     userCard
   ) {
     return <UsersList
       usersList={usersList}
-      isErrorVisible={isErrorVisible}
       userCard = {userCard}
     />
   }

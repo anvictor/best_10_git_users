@@ -8,7 +8,7 @@ export default class Loading extends Component {
 
   render() {
     return <div className='loading'>
-     Loading
+      <img src='https://agilenix.com/static/media/logo.c9946d3f.svg' alt="logo"/>
     </div>
   };
 };
