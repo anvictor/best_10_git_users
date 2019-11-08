@@ -52,20 +52,19 @@ class App extends React.Component {
           dataSource: responseJson,
         }, function () {
           let localItems = [...this.state.dataSource.items];
-          this.setState({
-            isErrorVisible: true
-          });
           this.refreshUsersList(localItems);
-
         });
       })
       .catch((error) => {
         console.error(error);
         this.throwErrorMessage(error);
+        this.setState({
+          isErrorVisible: true
+        });
         setTimeout(()=>{
           this.hideErrorMessage();
           this.setState({
-            isErrorVisible: true
+            isErrorVisible: false
           });
         },2000);
       });
@@ -74,6 +73,7 @@ class App extends React.Component {
   render() {
     const usersList = this.props.store.usersList.usersList;
     const loading = this.props.store.loading;
+    console.log('error visible *********************',this.state.isErrorVisible);
     if (this.state.isLoading) {
       return (
         <div className="App">
@@ -85,7 +85,7 @@ class App extends React.Component {
     }
     return (
       <div className="App">
-        {!this.state.isErrorVisible && <Error
+        {this.state.isErrorVisible && <Error
           error = "error"
         />}
 
