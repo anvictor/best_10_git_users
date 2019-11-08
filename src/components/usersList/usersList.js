@@ -8,7 +8,6 @@ export default class UsersList extends Component {
   }
 
   render() {
-    console.log('users List ********************* props', this.props);
     return <div className='usersList'>
       <ul>{this.props.usersList.map(user =>
         <li className={"userItem"} key={user.id} onClick={()=> this.props.userCard(user)} >

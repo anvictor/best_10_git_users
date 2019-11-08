@@ -9,7 +9,6 @@ export default class UserCard extends Component {
 
   render() {
     if (this.props.user){
-      console.log('userCard ****************************** this.props', this.props.user.login);
       return <div className='userCard'>
         <h1>
           <a href={this.props.user.html_url}>{this.props.user.login}</a>

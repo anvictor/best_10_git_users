@@ -12,3 +12,12 @@
   width: 50px;
   margin: 10px;
 }
+
+.namePlace{
+  margin: 10px;
+}
+.detailsPlace{
+  text-align: left;
+  font-size: small;
+  margin: 10px;
+}

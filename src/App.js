@@ -50,9 +50,36 @@ class App extends React.Component {
         this.setState({
           isLoading: false,
           dataSource: responseJson,
+          usersDetais: []
         }, function () {
           let localItems = [...this.state.dataSource.items];
-          this.refreshUsersList(localItems);
+          console.log('APP ****************************** localItems', localItems);
+          for (let i =0; i<localItems.length;i++){
+
+            fetch(localItems[i].url)
+              .then((response) => response.json())
+              .then((responseJson) => {
+                this.setState({
+                  usersDetais: [...this.state.usersDetais, responseJson],
+                }, function () {
+                  this.refreshUsersList(this.state.usersDetais);
+                });
+              })
+              .catch((error) => {
+                console.error(error);
+                this.throwErrorMessage(error);
+                this.setState({
+                  isErrorVisible: true
+                });
+                setTimeout(()=>{
+                  this.hideErrorMessage();
+                  this.setState({
+                    isErrorVisible: false
+                  });
+                },2000);
+              });
+          }
+
         });
       })
       .catch((error) => {
@@ -73,7 +100,6 @@ class App extends React.Component {
   render() {
     const usersList = this.props.store.usersList.usersList;
     const loading = this.props.store.loading;
-    console.log('error visible *********************',this.state.isErrorVisible);
     if (this.state.isLoading) {
       return (
         <div className="App">
@@ -117,8 +143,6 @@ class App extends React.Component {
   }
 
   _userCard(user) {
-    console.log('event click on user**********************user',user);
-
     this.refreshUserCard(user);
     this.setState({
       user: user

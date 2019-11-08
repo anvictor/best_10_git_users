@@ -8,6 +8,8 @@ class TriggerPath extends Component {
   }
 
   render() {
+    console.log('linl ***************************** props', this.props);
+
     return (
       <Link to={this.props.path.url}>
         <div className={"container"}>
@@ -15,8 +17,16 @@ class TriggerPath extends Component {
             <img className={"imagePlace"}  src={this.props.path.user.avatar_url} alt={this.props.path.user.avatar_url}/>
           </div>
           <div>
-            <h1 className={"loginPlace"}>{this.props.path.user.login}</h1>
+            <h5 className={"namePlace"}>{this.props.path.user.name}</h5>
           </div>
+          <div>
+            <p className={"detailsPlace"}>location: {this.props.path.user.location}</p>
+            <p className={"detailsPlace"}>bio: {this.props.path.user.bio}</p>
+            <p className={"detailsPlace"}>followers: {this.props.path.user.followers}</p>
+            <p className={"detailsPlace"}>public_repos: {this.props.path.user.public_repos}</p>
+
+          </div>
+
         </div>
       </Link>
     );
