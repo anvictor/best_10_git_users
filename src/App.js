@@ -22,15 +22,16 @@ class App extends React.Component {
     super(props);
     this.state = {
       isLoading: true,
-      isErrorVisible: false
+      isErrorVisible: false,
+      usersList: []
     };
     this.question = {
       head: "https://api.github.com/search/users?q=location%3A",
+      location: "kiev", // modify these request in the future if necessary
       middle: "+followers%3A%3E%3D",
+      followers: "200", // modify these request in the future if necessary
       tail: "&type=Users"
     };
-    this.location = "kiev";
-    this.followers = "200";
     this.refreshUserCard = this.props.refreshUserCardDispatch;
     this.refreshUsersList = this.props.refreshUsersListDispatch;
     this.throwErrorMessage = this.props.throwErrorMessageDispatch;
@@ -38,84 +39,43 @@ class App extends React.Component {
     this._userCard = this._userCard.bind(this);
   }
 
-  componentDidMount() {
-    return fetch(`${this.
-      question.head}${this.
-      location}${this.
-      question.middle}${this.
-      followers}${this.
-      question.tail}`)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState({
-          isLoading: false,
-          dataSource: responseJson,
-          usersDetais: []
-        }, function () {
-          let localItems = [...this.state.dataSource.items];
-          console.log('APP ****************************** localItems', localItems);
-          for (let i =0; i<localItems.length;i++){
+  async componentDidMount() {
+    const {head, location, middle, followers, tail} = this.question;
+    const poorList = await fetch(`${head}${location}${middle}${followers}${tail}`);
+    const poorJson = await poorList.json();
+    let {items: poorPersons} = poorJson;
+    let richPersons = [];
+    for (let i = 0; i < poorPersons.length; i++) {
+      const richPerson = await fetch(poorPersons[i].url);
+      const richJson = await richPerson.json();
+      richPersons[i] = {...richPersons[i], ...richJson}
+    }
+    this.setState({
+      isLoading: false,
+      usersList: richPersons
+    });
 
-            fetch(localItems[i].url)
-              .then((response) => response.json())
-              .then((responseJson) => {
-                this.setState({
-                  usersDetais: [...this.state.usersDetais, responseJson],
-                }, function () {
-                  this.refreshUsersList(this.state.usersDetais);
-                });
-              })
-              .catch((error) => {
-                console.error(error);
-                this.throwErrorMessage(error);
-                this.setState({
-                  isErrorVisible: true
-                });
-                setTimeout(()=>{
-                  this.hideErrorMessage();
-                  this.setState({
-                    isErrorVisible: false
-                  });
-                },2000);
-              });
-          }
-
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-        this.throwErrorMessage(error);
-        this.setState({
-          isErrorVisible: true
-        });
-        setTimeout(()=>{
-          this.hideErrorMessage();
-          this.setState({
-            isErrorVisible: false
-          });
-        },2000);
-      });
   }
 
   render() {
-    const usersList = this.props.store.usersList.usersList;
+    const usersList = this.state.usersList;
     const loading = this.props.store.loading;
     if (this.state.isLoading) {
       return (
         <div className="App">
           <Loading
-          loading = {loading}
+            loading={loading}
           />
         </div>
       )
-    }
-    return (
-      <div className="App">
-        {this.state.isErrorVisible && <Error
-          error = "error"
-        />}
+    } else {
+      return (
+        <div className="App">
+          {this.state.isErrorVisible && <Error
+            error="error"
+          />}
 
-        <HashRouter>
+          <HashRouter>
             <Redirect from="/" exact to="/usersList"/>
             <Route path="/usersList"
                    render={() => this._usersListCall(
@@ -124,12 +84,13 @@ class App extends React.Component {
                    )}
             />
 
-        </HashRouter>
-        <UserCard
-          user={this.state.user}
-        />
-      </div>
-    );
+          </HashRouter>
+          <UserCard
+            user={this.state.user}
+          />
+        </div>
+      );
+    }
   }
 
   _usersListCall(
@@ -138,7 +99,7 @@ class App extends React.Component {
   ) {
     return <UsersList
       usersList={usersList}
-      userCard = {userCard}
+      userCard={userCard}
     />
   }
 

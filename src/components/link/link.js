@@ -8,10 +8,9 @@ class TriggerPath extends Component {
   }
 
   render() {
-    console.log('linl ***************************** props', this.props);
 
     return (
-      <Link to={this.props.path.url}>
+      <Link to={`git10bestUsers/`}>
         <div className={"container"}>
           <div>
             <img className={"imagePlace"}  src={this.props.path.user.avatar_url} alt={this.props.path.user.avatar_url}/>

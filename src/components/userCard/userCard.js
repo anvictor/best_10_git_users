@@ -1,31 +1,27 @@
-import React, {Component} from "react";
+import React from "react";
 import './userCard.css';
 import Button from "@material-ui/core/Button/Button";
 
-export default class UserCard extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    if (this.props.user){
+function UserCard(props){
+    if (props.user){
+      const {user:{html_url: html = '',
+        avatar_url: avatar = '',
+        login = ''}} = props;
       return <div className='userCard'>
         <h1>
-          <a href={this.props.user.html_url}>{this.props.user.login}</a>
+          <a href={html}>{login}</a>
         </h1>
-        <img src={this.props.user.avatar_url} alt={this.props.user.login}/>
+        <img src={avatar} alt={login}/>
         <p>
-          <a href="/usersList">
+          <a href="/git10bestUsers">
             <Button className='backBtn'
                     variant="contained" color='primary'>
               BACK
             </Button>
           </a>
         </p>
-
-
       </div>
     }
     return <div></div>
-  };
 };
+export default UserCard;
