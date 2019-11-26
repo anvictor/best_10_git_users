@@ -22,6 +22,6 @@ function UserCard(props){
         </p>
       </div>
     }
-    return <div></div>
-};
+    return <div>{""}</div>
+}
 export default UserCard;

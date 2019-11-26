@@ -40,8 +40,23 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
+    try {
     const {head, location, middle, followers, tail} = this.question;
     const poorList = await fetch(`${head}${location}${middle}${followers}${tail}`);
+      if (poorList.status>200) {
+        this.setState({
+          errorMessage: `${poorList.status} ${poorList.statusText} too frequent requests.
+           Restart later!`,
+          isLoading: false,
+          isErrorVisible: true
+        });
+        setTimeout(()=>{
+          this.hideErrorMessage();
+          this.setState({
+            errorMessage: `Try to restart page now again!`,
+          });
+        },11000);
+      }
     const poorJson = await poorList.json();
     let {items: poorPersons} = poorJson;
     let richPersons = [];
@@ -50,11 +65,25 @@ class App extends React.Component {
       const richJson = await richPerson.json();
       richPersons[i] = {...richPersons[i], ...richJson}
     }
-    this.setState({
+
+      this.setState({
       isLoading: false,
       usersList: richPersons
     });
-
+    }catch(error){
+      console.error(error);
+      this.throwErrorMessage(`throwErrorMessage`);
+      this.setState({
+        errorMessage: `${error}  too frequent requests. Restart later!`,
+        isErrorVisible: true
+      });
+      setTimeout(()=>{
+        this.hideErrorMessage();
+        this.setState({
+          errorMessage: `Try to restart page now!`,
+        });
+      },10000);
+    }
   }
 
   render() {
@@ -72,7 +101,7 @@ class App extends React.Component {
       return (
         <div className="App">
           {this.state.isErrorVisible && <Error
-            error="error"
+            error={this.state.errorMessage}
           />}
 
           <HashRouter>

@@ -1,15 +1,14 @@
-.usersList {
-  color: red;
+img{
+  width: 50px;
 }
-
-.usersList li {
-  list-style-type: none;
-
+.root{
+  width: 100%;
+  overflow-x: auto;
 }
-
-
-
-.usersList ul {
-  margin-left: 0;
-  padding-left: 0;
+.table{
+min-width: 650px;
+}
+.sortable{
+  display: flex;
+  justify-content: center;
 }

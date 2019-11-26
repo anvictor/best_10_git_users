@@ -7,6 +7,7 @@ export default class Error extends Component {
   }
 
   render() {
+    console.log('error **************************** props',this.props);
     return <div  className='error'>
       <h1>
         ERROR MESSAGE
