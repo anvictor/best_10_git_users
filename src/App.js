@@ -103,7 +103,6 @@ class App extends React.Component {
           {this.state.isErrorVisible && <Error
             error={this.state.errorMessage}
           />}
-
           <HashRouter>
             <Redirect from="/" exact to="/usersList"/>
             <Route path="/usersList"
